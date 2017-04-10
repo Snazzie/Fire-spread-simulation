@@ -76,7 +76,7 @@ int main(void)
 void GenerateTree(int coordinate[1][1])
 {
 	Tree tree = Tree(coordinate);  // new tree
-	//trees.push_back(tree);
+	
 }
 
 //char TreeStatus(int coordinate[1][1])

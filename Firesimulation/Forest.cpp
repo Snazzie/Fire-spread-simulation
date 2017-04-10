@@ -6,12 +6,18 @@ Forest::Forest()
 	{
 		for (int x = 0; x < 21; x++)
 		{
-			if (y == 0 || y == 20)
+			if (y == 0 || y == 20) 
+			{
 				forestMap[y][x] = boundry;  // North and south boundary layers
-			else if (x == 0 || x == 20)
+			}
+			else if (x == 0 || x == 20) 
+			{
 				forestMap[y][x] = boundry;  // East and west boundary layers
+			}
 			else
+			{
 				forestMap[y][x] = untouched;  // Everything else
+			}
 		}
 	}
 }
@@ -35,7 +41,7 @@ void Forest::DisplayForest()
 			{
 				SetConsoleTextAttribute(hConsole, 15); // white
 			}
-			
+
 			cout << forestMap[y][x];
 		}
 		cout << endl;
