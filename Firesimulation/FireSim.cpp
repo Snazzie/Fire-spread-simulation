@@ -15,10 +15,6 @@ char untouched = '&';
 char burning = 'X';
 char dead, boundry = '\n';
 
-//vector<Tree> trees;
-
-
-
 void sim()
 {
 	//vector<Tree> trees;
