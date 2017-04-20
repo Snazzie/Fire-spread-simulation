@@ -1,66 +1,83 @@
-// mapview.cpp
+
 #include <iostream>
 #include <cstdlib>
 #include <string>
 #include <vector>
-#include "Tree.h"
+//#include "Tree.h"
 #include "Forest.h"
+
 using namespace std;
 
 
 void sim();
-void GenerateTree(int coordinate[1][1]);
+void generateTrees();
+void surroundingTreeFate(Tree tree);
 
-char untouched = '&';
-char burning = 'X';
-char dead, boundry = '\n';
+
+Forest forest;
+bool redraw = true;
+
+//  generate map
+//  for each tree generate a tree object
+//  set burn start location
+//  calculate catch fire event
+//  cycle tree life
+//  generate blank map
+//  place tree objects to original location
+//  calculate catch fire event
 
 void sim()
 {
-	//vector<Tree> trees;
+	
 	int iterationCount = 0;
-	Forest forest = Forest();
-
+	
 	// Generate
-
+	forest = Forest();
+	generateTrees();
+	
+	
 
 	// Set the middle cell as a burning tree.
-	forest.forestMap[10][10] = 'X';
+	forest.getTree(10,10).cycleState(forest);
 
 	string input;
-	bool redraw = true;
+	
+
+	// Display the forest map
+	forest.displayForest();
 
 	// Start the simulation
 	while (redraw == true)
 	{
-		// Display the forest map
-		forest.DisplayForest();
 
 		// There are several ways to achieve Enter key recognition; this is one way
 		cout << "Press Enter for time increment, or any alphanumeric key to exit>" << endl;
 		getline(cin, input);
 
-		if (input != "")
+		if (input != "") 
+		{
 			redraw = false;
+		}
 		else
 		{
-			// Lets expand the fire rather arbitrarily - in reality would use rules and occur many times
-			/*forestMap[9][9] = 'X';
-			forestMap[9][10] = 'X';
-			forestMap[9][11] = 'X';
-			forestMap[10][9] = 'X';
-			forestMap[10][10] = '.';
-			forestMap[10][11] = 'X';
-			forestMap[11][9] = 'X';
-			forestMap[11][10] = 'X';
-			forestMap[11][11] = 'X';*/
+			for (int i = 0; i < forest.treeVector.size(); i++)   // go through all burning trees
+			{
+				surroundingTreeFate(forest.treeVector[i]);
+
+				// calculate catch fire
+			}
+			forest.displayForest();
 		}
 	}
 }
 
 int main(void)
 {
-	sim();
+	while (redraw == true) 
+	{
+		sim();
+	}
+		
 
 
 
@@ -69,9 +86,21 @@ int main(void)
 
 
 
-void GenerateTree(int coordinate[1][1])
+void generateTrees()
 {
-	Tree tree = Tree(coordinate);  // new tree
+	for (int y = 0; y < 21; y++)
+	{
+		for (int x = 0; x < 21; x++)
+		{
+			if (forest.forestMap[x][y] == untouched)
+			{
+				Tree tree = Tree(x, y);  // new tree
+				
+				forest.addTree(tree);  // add tree to list
+			}
+		}
+	}
+	
 	
 }
 
@@ -87,7 +116,37 @@ void GenerateTree(int coordinate[1][1])
 //}
 //
 
-
+void surroundingTreeFate(Tree tree)
+{
+	int dir = 0; // Set direction to zero
+	bool onFire = false;
+	
+	//Declare and initialize a Direction Array for the 8 locations around a tree
+	int dirAry[8][2] = { {-1,-1},{-1,0},{-1,-1},{0,-1},{0,1},{1,-1},{1,0},{1,1} };
+	 //This while loop scans through the Direction Array to help determine
+		// the probability of neighboring trees being on fire
+		while (dir < 8 && !onFire)
+		{
+			int X = tree.pos_x + dirAry[dir][0];
+			int Y = tree.pos_y + dirAry[dir][1];
+			if (forest.forestMap[X][Y] == untouched) {
+				// calculate fate
+				if (rand() % 100 < 50)
+				{
+					// get tree object and set it on fire
+					forest.getTree(X, Y).cycleState(forest);
+				}
+				else
+				{
+					dir++;
+				}
+			}
+			else
+			{
+				dir++;
+			}
+		}
+}
 //bool isNeighbourOnFire(char forestMap[21][21], int row, int column)
 //{
 //	int dir = 0; // Set direction to zero
