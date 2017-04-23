@@ -11,8 +11,6 @@ using namespace std;
 
 void sim();
 void generateTrees();
-void surroundingTreeFate(Tree tree);
-
 
 Forest forest;
 bool redraw = true;
@@ -36,9 +34,32 @@ void sim()
 	generateTrees();
 	
 	
+	/*for (int i = 0; i < forest.treeVector.size(); i++)
+	{
+		cout << forest.treeVector[i].pos_x << forest.treeVector[i].pos_y << "state: " << forest.treeVector[i].state  << endl;
+	}
+	system("PAUSE");*/
 
 	// Set the middle cell as a burning tree.
-	forest.getTree(10,10).cycleState(forest);
+
+	//forest.getTree(10,10).cycleState(forest);
+
+	for (int i = 0; i < forest.treeVector->size(); i++)
+	{
+		
+
+		if ((*forest.treeVector)[i]->pos_x == 10 && (*forest.treeVector)[i]->pos_y == 10) {
+
+			//forest.treeVector[i]->cycleState();
+			(*forest.treeVector)[i]->state = burning;
+			//forest.treeVector[i]->state = burning;
+			//forest.burningTreeVector.push_back(forest.treeVector[i]);
+			
+			//forest.forestMap[10][10] = forest.burningTreeVector[0]->state;
+
+		}
+	}
+	forest.updateMap();
 
 	string input;
 	
@@ -60,12 +81,16 @@ void sim()
 		}
 		else
 		{
-			for (int i = 0; i < forest.treeVector.size(); i++)   // go through all burning trees
+			
+
+			for (int i = 0; i < forest.burningTreeVector->size(); i++)   // go through all burning trees
 			{
-				surroundingTreeFate(forest.treeVector[i]);
+				Tree* temp = (*forest.burningTreeVector)[i];
+				forest.surroundingTreeFate(*temp);
 
 				// calculate catch fire
 			}
+			system("cls");
 			forest.displayForest();
 		}
 	}
@@ -94,7 +119,7 @@ void generateTrees()
 		{
 			if (forest.forestMap[x][y] == untouched)
 			{
-				Tree tree = Tree(x, y);  // new tree
+				Tree* tree = new Tree(x, y);  // new tree
 				
 				forest.addTree(tree);  // add tree to list
 			}
@@ -116,37 +141,7 @@ void generateTrees()
 //}
 //
 
-void surroundingTreeFate(Tree tree)
-{
-	int dir = 0; // Set direction to zero
-	bool onFire = false;
-	
-	//Declare and initialize a Direction Array for the 8 locations around a tree
-	int dirAry[8][2] = { {-1,-1},{-1,0},{-1,-1},{0,-1},{0,1},{1,-1},{1,0},{1,1} };
-	 //This while loop scans through the Direction Array to help determine
-		// the probability of neighboring trees being on fire
-		while (dir < 8 && !onFire)
-		{
-			int X = tree.pos_x + dirAry[dir][0];
-			int Y = tree.pos_y + dirAry[dir][1];
-			if (forest.forestMap[X][Y] == untouched) {
-				// calculate fate
-				if (rand() % 100 < 50)
-				{
-					// get tree object and set it on fire
-					forest.getTree(X, Y).cycleState(forest);
-				}
-				else
-				{
-					dir++;
-				}
-			}
-			else
-			{
-				dir++;
-			}
-		}
-}
+
 //bool isNeighbourOnFire(char forestMap[21][21], int row, int column)
 //{
 //	int dir = 0; // Set direction to zero

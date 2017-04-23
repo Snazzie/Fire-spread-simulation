@@ -11,31 +11,36 @@ using std::vector;
 
 static char untouched = '&';
 static char burning = 'X';
-static char dead, boundry = '\n';
+static char dead = '.';
+static char boundry = '*';
 
 class Tree;
 
 class Forest
 {
 public:
-	vector<Tree> treeVector;
+	vector<Tree*> *treeVector;
+	vector<Tree*> *burningTreeVector;
 	char forestMap[21][21];
 
 	Forest();
 	void displayForest();
-	void addTree(Tree &tree);
-	Tree getTree(int posX, int posY);
+	void addTree(Tree* tree);
+
+	void updateMap();
+	void surroundingTreeFate(Tree tree);
 };
 
 class Tree
 {
 public:
-	char state; // & = Alive |  X = Burnt |   = Empty
+	char state; // & = Alive |  X = Burning |   = Empty
 	int pos_x, pos_y;
 	int lifePoints = 2;   // will only burn 1 iteration   |    0 = empty    1 = burning    2 = untouched 
 
 	Tree(int x, int y);
-	void cycleState(Forest forest);
+	void cycleState();
+	Tree* clone();
 };
 
 #endif // DEBUG

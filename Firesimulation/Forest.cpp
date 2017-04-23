@@ -2,17 +2,17 @@
 
 Forest::Forest()
 {
-	treeVector = vector<Tree>(); // initiate vector
-
+	treeVector = new vector<Tree*>(); // initiate vector
+	burningTreeVector = new vector<Tree*>();
 	for (int y = 0; y < 21; y++)
 	{
 		for (int x = 0; x < 21; x++)
 		{
-			if (y == 0 || y == 20) 
+			if (y == 0 || y == 20)
 			{
 				forestMap[y][x] = boundry;  // North and south boundary layers
 			}
-			else if (x == 0 || x == 20) 
+			else if (x == 0 || x == 20)
 			{
 				forestMap[y][x] = boundry;  // East and west boundary layers
 			}
@@ -22,6 +22,7 @@ Forest::Forest()
 			}
 		}
 	}
+
 }
 
 void Forest::displayForest()
@@ -30,8 +31,10 @@ void Forest::displayForest()
 
 	for (int y = 0; y < 21; y++)
 	{
+
 		for (int x = 0; x < 21; x++)
 		{
+			std::cout << ' ';
 			if (forestMap[y][x] == untouched) {
 				SetConsoleTextAttribute(hConsole, 10); // green
 			}
@@ -48,27 +51,108 @@ void Forest::displayForest()
 		}
 		std::cout << std::endl;
 	}
+
 }
 
-void Forest::addTree(Tree &tree)
+void Forest::addTree(Tree* tree)
 {
-	treeVector.push_back(tree);
+	treeVector->push_back(tree);
 }
 
-Tree Forest::getTree(int posX, int posY)
+
+void Forest::updateMap()
 {
-	for (unsigned int i = 0; i<treeVector.size(); i++)
+	//move and delete any non untouched trees from treevector
+	for (unsigned int i = 0; i < treeVector->size(); i++)
 	{
-		if (treeVector[i].pos_x == posX && treeVector[i].pos_y == posY)
+		if ((*treeVector)[i]->state != untouched)
 		{
-			return treeVector[i];
+			
+			int X = (*treeVector)[i]->pos_x;
+			int Y = (*treeVector)[i]->pos_y;
+			
+			(*burningTreeVector).push_back((*treeVector)[i]->clone());
+
+			//treeVector->erase(treeVector->begin() + i);
 		}
 	}
-	// temporary
-	Tree null = Tree(0,0);
-	return null;
-}
 
+	//delete any dead trees in burning vector  and update map
+	for (unsigned int i = 0; i < burningTreeVector->size(); i++)
+	{
+		
+
+		if ((*burningTreeVector)[i]->state == burning)
+		{
+			Tree temp = *(*burningTreeVector)[i];
+			int X = temp.pos_x;
+			int Y = temp.pos_y;
+			forestMap[X][Y] = temp.state;
+		}
+		else if ((*burningTreeVector)[i]->state == dead)
+		{
+			Tree temp = *(*burningTreeVector)[i];
+			int X = temp.pos_x;
+			int Y = temp.pos_y;
+			forestMap[X][Y] = dead;
+			//burningTreeVector->erase(burningTreeVector->begin() + i);
+		}
+		int in = 0;
+	}
+
+}
+void Forest:: surroundingTreeFate(Tree tree)
+{
+	int dir = 0; // Set direction to zero
+
+	//Declare and initialize a Direction Array for the 8 locations around a tree
+	int dirAry[8][2] = { { -1,-1 },{ -1,0 },{ -1,-1 },{ 0,-1 },{ 0,1 },{ 1,-1 },{ 1,0 },{ 1,1 } };
+	//This while loop scans through the Direction Array to help determine
+	// the probability of neighboring trees being on fire
+	while (dir < 8)
+	{
+		int X = tree.pos_x + dirAry[dir][0];
+		int Y = tree.pos_y + dirAry[dir][1];
+		if (forestMap[X][Y] == untouched) {
+			// calculate fate
+			if (rand() % 100 < 50)
+			{
+				// get tree object and set it on fire
+				//forest.getTree(X, Y).cycleState(forest);
+
+				for (int i = 0; i < treeVector->size(); i++)
+				{
+
+
+					if ((*treeVector)[i]->pos_x == X && (*treeVector)[i]->pos_y == Y) 
+					{
+						//cout << forest.treeVector[i].pos_x << forest.treeVector[i].pos_y << "state: " << forest.treeVector[i].state << endl;
+						(*treeVector)[i]->cycleState();
+						//forest.burningTreeVector.push_back(forest.treeVector[i].clone());
+						//forest.forestMap[X][Y] = forest.burningTreeVector[i].state;
+					}
+				}
+			}
+			else
+			{
+				dir++;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < (*burningTreeVector).size(); i++)
+			{
+
+				if ((*burningTreeVector)[i]->pos_x == X && (*burningTreeVector)[i]->pos_y == Y) {
+					//cout << forest.treeVector[i].pos_x << forest.treeVector[i].pos_y << "state: " << forest.treeVector[i].state << endl;
+					(*burningTreeVector)[i]->cycleState();
+					forestMap[X][Y] = (*burningTreeVector)[i]->state;
+				}
+			}
+			dir++;
+		}
+	}
+}
 
 Tree::Tree(int x, int y)
 {
@@ -79,7 +163,7 @@ Tree::Tree(int x, int y)
 
 
 
-void Tree::cycleState(Forest forest)
+void Tree::cycleState()
 {
 
 	if (lifePoints < 0)
@@ -97,11 +181,19 @@ void Tree::cycleState(Forest forest)
 		state = dead;
 	}
 
-	forest.forestMap[pos_x][pos_y] = state;  // update state on map
+	//forest.forestMap[pos_x][pos_y] = state;  // update state on map
 
 											 // delete tree object if it is dead
 	if (state == dead)
 	{
 		delete this;
 	}
+}
+
+Tree* Tree::clone()
+{
+	Tree* newTree = new Tree(pos_x,pos_y);
+	newTree->state = state;
+	newTree->lifePoints = lifePoints;
+	return newTree ;
 }
