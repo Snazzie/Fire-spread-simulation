@@ -113,10 +113,12 @@
   <ItemGroup>
     <ClCompile Include="Forest.cpp" />
     <ClCompile Include="FireSim.cpp" />
+    <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="Tree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Forest.h" />
+    <ClInclude Include="Simulation.h" />
     <ClInclude Include="Tree.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
