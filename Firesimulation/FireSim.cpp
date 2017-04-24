@@ -21,7 +21,7 @@ bool redraw = true;
 //  cycle tree life
 //  generate blank map
 //  place tree objects to original location
-//  calculate catch fire event
+//  calculate catch fire event+
 
 
 
@@ -34,15 +34,17 @@ int main(void)
 	bool restart = true;
 	while (restart)
 	{
-		Simulation sim = Simulation();
-		sim.setParams();
+		Simulation* sim = new Simulation();
+		sim->setParams();
 
 
-		sim.start();
+		sim->start();
+		
+		delete sim;
 		system("cls");
 		cout << "Press Enter for another simulation, or any alphanumeric key to exit>" << endl;
 		getline(cin, input);
-		//redraw = true;
+		
 		if (input != "")
 		{
 			restart = false;
