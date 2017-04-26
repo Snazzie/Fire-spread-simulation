@@ -5,7 +5,7 @@
 //#include "Tree.h"
 #include "Simulation.h"
 
-using namespace std;
+//using namespace std;
 
 
 class Simulation;
@@ -38,17 +38,10 @@ int main(void)
 		sim->setParams();
 
 
-		sim->start();
+		restart = sim->start();  // determine to exit or restart sim
 		
 		delete sim;
-		system("cls");
-		cout << "Press Enter for another simulation, or any alphanumeric key to exit>" << endl;
-		getline(cin, input);
-		
-		if (input != "")
-		{
-			restart = false;
-		}
+
 
 	}
 

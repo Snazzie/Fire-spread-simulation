@@ -39,6 +39,8 @@ const int none = 1;
 const int low = 2;
 const int high = 3;
 
+// 2d coordinate reference alphabet
+const char alphabetArray[26] = { 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z' };
 class Tree;
 
 class Params {
@@ -50,6 +52,8 @@ public:
 	int weather;
 	int windDir; // 1 = N || 2 = E || 3 = S || 4 = W || 5 = NE || 6 = SE || 7 = SW || 8 = NW
 	int windSpeed; // 1 = None || 2 = Low || 3 = High
+	std::vector<std::pair<int, int>> forestSize = { {21,21} };
+	std::vector<std::pair<int, int>> fireStartCoordinate = { {0,0} };
 };
 
 class Forest 

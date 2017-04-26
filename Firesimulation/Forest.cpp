@@ -5,25 +5,26 @@ Forest::Forest(Params parameters)
 	std::system("cls");
 	params = parameters;
 
-
-
-
+	int xVec = params.forestSize[0].first;
+	int yVec = params.forestSize[0].second;
+	int xFireStart = params.fireStartCoordinate[0].first;
+	int yFireStart = params.fireStartCoordinate[0].second;
 	treeVector = new vector<Tree*>(); // initiate vector
 	burningTreeVector = new vector<Tree*>();
-	for (int y = 0; y < 21; y++)
+	for (int y = 0; y < yVec; y++)
 	{
-		for (int x = 0; x < 21; x++)
+		for (int x = 0; x < xVec; x++)
 		{
 
-			if (y == 0 || y == 20)
+			if (y == 0 || y == yVec-1)
 			{
 				forestMap[x][y] = boundry;  // North and south boundary layers
 			}
-			else if (x == 0 || x == 20)
+			else if (x == 0 || x == xVec-1)
 			{
 				forestMap[x][y] = boundry;  // East and west boundary layers
 			}
-			else if (x == 10 && y == 10)  // always have a tree in center
+			else if (x == xFireStart && y == yFireStart)  // always have a tree in center
 			{
 				forestMap[x][y] = untouched;
 			}
@@ -52,14 +53,27 @@ Forest::~Forest() {}
 
 void Forest::displayForest()
 {
+	int xVec = params.forestSize[0].first;
+	int yVec = params.forestSize[0].second;
+
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	for (int y = 0; y < 21; y++)
+	for (int y = -1; y < yVec; y++)
 	{
 
-		for (int x = 0; x < 21; x++)
+		for (int x = -1; x < xVec; x++)
 		{
+
+			
 			std::cout << ' ';
+			if (y == -1)
+			{
+				std::cout << alphabetArray[y];
+			}
+			else if (x == -1)
+			{
+				std::cout << alphabetArray[x];
+			}
 			if (forestMap[x][y] == untouched) {
 				SetConsoleTextAttribute(hConsole, 10); // green
 			}
@@ -90,10 +104,13 @@ void Forest::addTree(Tree* tree)
 }
 void Forest::generateTrees()
 {
+	int xVec = params.forestSize[0].first;
+	int yVec = params.forestSize[0].second;
 
-	for (int y = 0; y < 21; y++)
+
+	for (int y = 0; y < yVec; y++)
 	{
-		for (int x = 0; x < 21; x++)
+		for (int x = 0; x < xVec; x++)
 		{
 			if (forestMap[x][y] == untouched)
 			{
@@ -193,7 +210,7 @@ void Forest::surroundingTreeFate(Tree tree)
 			else if (params.windSpeed == low)
 			{
 				// lessen opposite directions chance to set afire
-				int divide = 1.2;
+				double divide = 1.2;
 				probAfterCalc = setFireProbability;
 				switch (params.windDir)
 				{
@@ -274,7 +291,7 @@ void Forest::surroundingTreeFate(Tree tree)
 			else if (params.windSpeed == high)
 			{ 
 				// lessen opposite directions chance to set afire
-				int divide = 11;
+				double divide = 11;
 				probAfterCalc = setFireProbability;
 				switch (params.windDir)
 				{

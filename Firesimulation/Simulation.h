@@ -19,7 +19,7 @@ public:
 	Simulation();
 	~Simulation();
 	void setParams();
-	void start();
+	bool start();
 
 
 };
