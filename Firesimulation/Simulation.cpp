@@ -4,12 +4,12 @@
 Simulation::Simulation()
 {
 
-	params = Params();
+	params = Parameters();
 
 }
 Simulation::~Simulation() {}
 
-void Simulation::setParams()
+void Simulation::setParameters()
 {
 
 	// Map Generation mode
@@ -84,7 +84,7 @@ void Simulation::setParams()
 	// Wind Direction
 	if (params.windSpeed != none)
 	{
-		while (params.windDir > northWest || params.windDir < north)
+		while (params.windDirection > northWest || params.windDirection < north)
 		{
 			system("cls");
 			cout << "Please choose a wind direction" << endl << endl;
@@ -92,11 +92,11 @@ void Simulation::setParams()
 			cout << "5 = North East | 6 = South East | 7 = South West | 8 = North West" << endl;
 			cout << "Wind Direction: ";
 
-			if (!(cin >> params.windDir))
+			if (!(cin >> params.windDirection))
 			{
 				cin.clear();
 				cin.ignore();
-				params.windDir = 0;
+				params.windDirection = 0;
 			}
 		}
 	}
@@ -151,20 +151,20 @@ bool Simulation::start()
 		}
 		system("cls");
 
-		startingTreeCount = forest->treeVector->size();
+		startingTreeCount = forest->untouchedTreeVector->size();
 
 		forest->forestMap[params.fireStartCoordinate[0].first][params.fireStartCoordinate[0].second] = burning;
 		forest->displayForest();
 		system("PAUSE");
-		for (int i = 0; i < forest->treeVector->size(); i++)
+		for (int i = 0; i < forest->untouchedTreeVector->size(); i++)
 		{
 
 
-			if ((*forest->treeVector)[i]->pos_x == params.fireStartCoordinate[0].first && (*forest->treeVector)[i]->pos_y == params.fireStartCoordinate[0].second)
+			if ((*forest->untouchedTreeVector)[i]->pos_x == params.fireStartCoordinate[0].first && (*forest->untouchedTreeVector)[i]->pos_y == params.fireStartCoordinate[0].second)
 			{
 
-				(*forest->burningTreeVector).push_back((*forest->treeVector)[i]->clone());
-				(*forest->treeVector).erase((*forest->treeVector).begin() + i);
+				(*forest->burningTreeVector).push_back((*forest->untouchedTreeVector)[i]->clone());
+				(*forest->untouchedTreeVector).erase((*forest->untouchedTreeVector).begin() + i);
 				break;
 			}
 		}
@@ -214,12 +214,12 @@ bool Simulation::start()
 					forest->displayForest();
 
 					cout << "Trees Started With: " << startingTreeCount << endl;
-					cout << "Trees Left: " << forest->treeVector->size() << endl;
-					cout << "Trees Died: " << startingTreeCount - forest->treeVector->size() - forest->burningTreeVector->size() << endl;
+					cout << "Trees Left: " << forest->untouchedTreeVector->size() << endl;
+					cout << "Trees Died: " << startingTreeCount - forest->untouchedTreeVector->size() - forest->burningTreeVector->size() << endl;
 					cout << "Simulation Ended After " << incrementCount << " Ticks" << endl << endl;;
 
 
-					cout << "Would you like to do another simulation with the same parameters?" << endl << endl;
+					cout << "Would you like to do another simulation with the same params?" << endl << endl;
 
 					cout << "1 = Yes" << endl;
 					cout << "2 = Return to menu" << endl;
@@ -255,7 +255,7 @@ bool Simulation::start()
 				if (forest->params.windSpeed != 0)
 				{
 					cout << "Wind Direction: ";
-					switch (forest->params.windDir)
+					switch (forest->params.windDirection)
 					{
 					case 1: {cout << "North"; break; }
 					case 2: {cout << "East"; break; }
@@ -289,9 +289,9 @@ bool Simulation::start()
 				}
 				cout << endl;
 
-				cout << "Untouched Trees: " << forest->treeVector->size() << endl;
+				cout << "Untouched Trees: " << forest->untouchedTreeVector->size() << endl;
 				cout << "Trees On Fire: " << forest->burningTreeVector->size() << endl;
-				cout << "Trees Died: " << startingTreeCount - forest->treeVector->size() - forest->burningTreeVector->size() << endl;
+				cout << "Trees Died: " << startingTreeCount - forest->untouchedTreeVector->size() - forest->burningTreeVector->size() << endl;
 
 			}
 
@@ -300,7 +300,7 @@ bool Simulation::start()
 
 
 	}
-
+	
 }
 
 

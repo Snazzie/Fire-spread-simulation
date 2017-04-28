@@ -1,15 +1,15 @@
 #include "Forest.h"
 
-Forest::Forest(Params parameters)
+Forest::Forest(Parameters params)
 {
 	std::system("cls");
-	params = parameters;
+	this->params = params;
 
 	int xVec = params.forestSize[0].first;
 	int yVec = params.forestSize[0].second;
 	int xFireStart = params.fireStartCoordinate[0].first;
 	int yFireStart = params.fireStartCoordinate[0].second;
-	treeVector = new vector<Tree*>(); // initiate vector
+	untouchedTreeVector = new vector<Tree*>(); // initiate vector
 	burningTreeVector = new vector<Tree*>();
 	for (int y = 0; y < yVec; y++)
 	{
@@ -53,6 +53,8 @@ Forest::~Forest() {}
 
 void Forest::displayForest()
 {
+	// 2d coordinate reference alphabet
+	const char alphabetArray[26] = { 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z' };
 	int xVec = params.forestSize[0].first;
 	int yVec = params.forestSize[0].second;
 
@@ -97,11 +99,7 @@ void Forest::displayForest()
 
 }
 
-void Forest::addTree(Tree* tree)
-{
-	tree->location = this;
-	treeVector->push_back(tree);
-}
+
 void Forest::generateTrees()
 {
 	int xVec = params.forestSize[0].first;
@@ -115,7 +113,7 @@ void Forest::generateTrees()
 			if (forestMap[x][y] == untouched)
 			{
 				Tree* tree = new Tree(x, y, this);  // new tree
-				addTree(tree);  // add tree to list
+				untouchedTreeVector->push_back(tree);  // add tree to list
 			}
 		}
 	}
@@ -179,16 +177,9 @@ void Forest::surroundingTreeFate(Tree tree)
 	else if (params.windSpeed == high)
 	{
 		setFireProbability = setFireProbability * 1.4;
-		// give direction additional cell to spread
-		/*switch (params.windDir)
-		{
-		case north: {dirAry += {0, -2}; break; }
-		case south: {dirAry += {0, 2}; break; }
-		case east: {dirAry += {2, 0}; break; }
-		case west: {dirAry += {-2, 0}; break; }
-		}*/
+
 	}
-	//
+
 	
 	//This while loop scans through the Direction Array to help determine
 	// the probability of neighboring trees being on fire
@@ -212,7 +203,7 @@ void Forest::surroundingTreeFate(Tree tree)
 				// lessen opposite directions chance to set afire
 				double divide = 1.2;
 				probAfterCalc = setFireProbability;
-				switch (params.windDir)
+				switch (params.windDirection)
 				{
 				case north:
 				{
@@ -293,7 +284,7 @@ void Forest::surroundingTreeFate(Tree tree)
 				// lessen opposite directions chance to set afire
 				double divide = 11;
 				probAfterCalc = setFireProbability;
-				switch (params.windDir)
+				switch (params.windDirection)
 				{
 				case north:
 				{
@@ -377,15 +368,15 @@ void Forest::surroundingTreeFate(Tree tree)
 			{
 				// get tree object and set afire
 
-				for (int i = 0; i < treeVector->size(); i++)
+				for (int i = 0; i < untouchedTreeVector->size(); i++)
 				{
 
 
-					if ((*treeVector)[i]->pos_x == X && (*treeVector)[i]->pos_y == Y)
+					if ((*untouchedTreeVector)[i]->pos_x == X && (*untouchedTreeVector)[i]->pos_y == Y)
 					{
 
-						(*burningTreeVector).push_back((*treeVector)[i]->clone());
-						(*treeVector).erase((*treeVector).begin() + i);
+						(*burningTreeVector).push_back((*untouchedTreeVector)[i]->clone());
+						(*untouchedTreeVector).erase((*untouchedTreeVector).begin() + i);
 
 					}
 				}
@@ -415,10 +406,7 @@ Tree::Tree(int x, int y, Forest* forest)
 
 }
 
-Tree::~Tree()
-{
-	//Location->forestMap[pos_x][pos_y] = state;
-}
+Tree::~Tree(){}
 
 
 void Tree::cycleState()

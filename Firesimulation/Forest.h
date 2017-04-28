@@ -14,6 +14,8 @@ static char burning = 'X';
 static char dead = '.';
 static char boundry = '#';
 
+
+// Parameters
 // generation modes
 const int fullMap = 1;
 const int randomMap = 2;
@@ -39,53 +41,52 @@ const int none = 1;
 const int low = 2;
 const int high = 3;
 
-// 2d coordinate reference alphabet
-const char alphabetArray[26] = { 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z' };
+
 class Tree;
 
-class Params {
+class Parameters {
 
 public:
 	
 	int mapGenMode;
 	int randomGenProbability;
 	int weather;
-	int windDir; // 1 = N || 2 = E || 3 = S || 4 = W || 5 = NE || 6 = SE || 7 = SW || 8 = NW
+	int windDirection; // 1 = N || 2 = E || 3 = S || 4 = W || 5 = NE || 6 = SE || 7 = SW || 8 = NW
 	int windSpeed; // 1 = None || 2 = Low || 3 = High
-	std::vector<std::pair<int, int>> forestSize = { {21,21} };
-	std::vector<std::pair<int, int>> fireStartCoordinate = { {0,0} };
+	vector<std::pair<int, int>> forestSize = { {21,21} };
+	vector<std::pair<int, int>> fireStartCoordinate = { {0,0} };
 };
 
 class Forest 
 {
+
+	void generateTrees();
 public:
-	vector<Tree*> *treeVector;
+	vector<Tree*> *untouchedTreeVector;
 	vector<Tree*> *burningTreeVector;
 	char forestMap[21][21];
-	Params params;
+	Parameters params;
 
-	Forest(Params parameters);
+	Forest(Parameters params);
 	~Forest();
 	void displayForest();
-	
-	
+
 	void updateMap();
 	void surroundingTreeFate(Tree tree);
 
-private:
-	void generateTrees();
-	void addTree(Tree* tree);
+
 };
 
 class Tree 
 {
+
+	int lifePoints = 2;   // will only burn 1 iteration   |    0 = empty    1 = burning    2 = untouched 
+	
 public:
 	char state; // & = Alive |  X = Burning |   = Empty
-	int pos_x, pos_y;
-	int dryness;
-	int lifePoints = 2;   // will only burn 1 iteration   |    0 = empty    1 = burning    2 = untouched 
+	int pos_x, pos_y;	
 	Forest* location;
-
+	int dryness;
 	
 	Tree(int x, int y, Forest* forest);
 	~Tree();
