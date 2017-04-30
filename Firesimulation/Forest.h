@@ -7,6 +7,8 @@
 #include <Windows.h>
 #include <utility>
 using std::vector;
+using std::pair;
+using std::make_pair;
 
 // tree States
 static char untouched = '&';
@@ -41,32 +43,35 @@ const int none = 1;
 const int low = 2;
 const int high = 3;
 
-
+// forest grid size to simulate
+const int sizeX = 19;  
+const int sizeY = 19;
 class Tree;
 
 class Parameters {
 
 public:
-	
+
 	int mapGenMode;
 	int randomGenProbability;
 	int weather;
 	int windDirection; // 1 = N || 2 = E || 3 = S || 4 = W || 5 = NE || 6 = SE || 7 = SW || 8 = NW
 	int windSpeed; // 1 = None || 2 = Low || 3 = High
-	vector<std::pair<int, int>> forestSize = { {21,21} };
-	vector<std::pair<int, int>> fireStartCoordinate = { {0,0} };
+
+	vector<pair<int, int>> forestSize = { {sizeX + 2,sizeY + 2} }; // +2 offset is for boundries
+	vector<pair<int, int>> fireStartCoordinate = { {0,0} };
 };
 
-class Forest 
+class Forest
 {
 
 	void generateTrees();
 public:
 	vector<Tree*> *untouchedTreeVector;
 	vector<Tree*> *burningTreeVector;
-	char forestMap[21][21];
 	Parameters params;
-
+	char forestMap[sizeX + 2][sizeY + 2];
+	//vector<vector<char>> forestMap;                        // if wanted to specify map size, use this vector
 	Forest(Parameters params);
 	~Forest();
 	void displayForest();
@@ -77,17 +82,17 @@ public:
 
 };
 
-class Tree 
+class Tree
 {
 
 	int lifePoints = 2;   // will only burn 1 iteration   |    0 = empty    1 = burning    2 = untouched 
-	
+
 public:
 	char state; // & = Alive |  X = Burning |   = Empty
-	int pos_x, pos_y;	
+	int pos_x, pos_y;
 	Forest* location;
 	int dryness;
-	
+
 	Tree(int x, int y, Forest* forest);
 	~Tree();
 	void cycleState();

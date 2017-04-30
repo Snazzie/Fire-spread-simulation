@@ -4,23 +4,25 @@ Forest::Forest(Parameters params)
 {
 	std::system("cls");
 	this->params = params;
-
-	int xVec = params.forestSize[0].first;
-	int yVec = params.forestSize[0].second;
+	
+	int xAxis = params.forestSize[0].first;
+	int yAxis = params.forestSize[0].second;
+	
 	int xFireStart = params.fireStartCoordinate[0].first;
 	int yFireStart = params.fireStartCoordinate[0].second;
 	untouchedTreeVector = new vector<Tree*>(); // initiate vector
 	burningTreeVector = new vector<Tree*>();
-	for (int y = 0; y < yVec; y++)
+	for (int y = 0; y < yAxis; y++)
 	{
-		for (int x = 0; x < xVec; x++)
+		for (int x = 0; x < xAxis; x++)
 		{
 
-			if (y == 0 || y == yVec-1)
+			if (y == 0 || y == yAxis-1)
 			{
+
 				forestMap[x][y] = boundry;  // North and south boundary layers
 			}
-			else if (x == 0 || x == xVec-1)
+			else if (x == 0 || x == xAxis-1)
 			{
 				forestMap[x][y] = boundry;  // East and west boundary layers
 			}
@@ -54,45 +56,54 @@ Forest::~Forest() {}
 void Forest::displayForest()
 {
 	// 2d coordinate reference alphabet
-	const char alphabetArray[26] = { 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z' };
-	int xVec = params.forestSize[0].first;
-	int yVec = params.forestSize[0].second;
+ char alphabetArray[26] = { 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T'};
+	// 2d coordinate reference alphabet
+
+	int xAxis = params.forestSize[0].first;
+	int yAxis = params.forestSize[0].second;
 
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	for (int y = -1; y < yVec; y++)
+	for (int y = 0; y < yAxis; y++)
 	{
-
-		for (int x = -1; x < xVec; x++)
+		
+		for (int x = 0; x < xAxis; x++)
 		{
+			//if (x == -1 && y == -1) // vertical
+			//{
+			//	std::cout << alphabetArray[y - 3 + 2];
+			//	x + 1;
+			//}
+			//std::cout << " ";
+			//if (y == -1 && x > 1) // horizontal
+			//{
 
+			//		std::cout << alphabetArray[x - 2];
+
+			//	y + 1; // return y to 0
+			//}
+			//else {
+
+			std::cout << " ";
+
+				if (forestMap[x][y] == untouched) {
+					SetConsoleTextAttribute(hConsole, 10); // green
+				}
+				else if (forestMap[x][y] == burning)
+				{
+					SetConsoleTextAttribute(hConsole, 12); // red
+				}
+				else if (forestMap[x][y] == boundry)
+				{
+					SetConsoleTextAttribute(hConsole, 15); // white
+				}
+				else if (forestMap[x][y] == dead)
+				{
+					SetConsoleTextAttribute(hConsole, 14); // white
+				}
+				std::cout << forestMap[x][y];
+			//}
 			
-			std::cout << ' ';
-			if (y == -1)
-			{
-				std::cout << alphabetArray[y];
-			}
-			else if (x == -1)
-			{
-				std::cout << alphabetArray[x];
-			}
-			if (forestMap[x][y] == untouched) {
-				SetConsoleTextAttribute(hConsole, 10); // green
-			}
-			else if (forestMap[x][y] == burning)
-			{
-				SetConsoleTextAttribute(hConsole, 12); // red
-			}
-			else if (forestMap[x][y] == boundry)
-			{
-				SetConsoleTextAttribute(hConsole, 15); // white
-			}
-			else if (forestMap[x][y] == dead)
-			{
-				SetConsoleTextAttribute(hConsole, 14); // white
-			}
-
-			std::cout << forestMap[x][y];
 		}
 		std::cout << std::endl;
 	}
@@ -102,13 +113,13 @@ void Forest::displayForest()
 
 void Forest::generateTrees()
 {
-	int xVec = params.forestSize[0].first;
-	int yVec = params.forestSize[0].second;
+	int xAxis = params.forestSize[0].first;
+	int yAxis = params.forestSize[0].second;
 
 
-	for (int y = 0; y < yVec; y++)
+	for (int y = 0; y < yAxis; y++)
 	{
-		for (int x = 0; x < xVec; x++)
+		for (int x = 0; x < xAxis; x++)
 		{
 			if (forestMap[x][y] == untouched)
 			{
@@ -125,7 +136,7 @@ void Forest::generateTrees()
 void Forest::updateMap()
 {
 
-	//delete any dead trees in burning vector  and update map
+	// increment and delete any dead trees in burning vector  and update map
 
 	for (unsigned int i = 0; i < burningTreeVector->size(); i++)
 	{
@@ -161,11 +172,11 @@ void Forest::surroundingTreeFate(Tree tree)
 	// declare 8 cells around tree
 	int temp[8][2] = { { -1,-1 },{ 0,-1 },{ 1,-1 },{ 1,0 },{ 1,1 },{ 0,1 },{ -1,1 },{ -1,0 } };
 	// move cells into vector
-	vector<std::pair<int,int>> dirAry = vector<std::pair<int, int>>();
+	vector<pair<int,int>> dirAry = vector<pair<int, int>>();
 	for ( unsigned int i = 0; i < 8; i++) 
 	{
 		
-		dirAry.push_back( std::make_pair( temp[i][0] , temp[i][1]));
+		dirAry.push_back(make_pair( temp[i][0] , temp[i][1]));
 	}
 	
 
