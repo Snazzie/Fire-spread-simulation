@@ -15,8 +15,6 @@ public:
 	~Simulation();
 	void setParameters();
 	bool start();
-
-
 };
 
 #endif // DEBUG
