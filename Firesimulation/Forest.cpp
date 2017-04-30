@@ -55,9 +55,7 @@ Forest::~Forest() {}
 
 void Forest::displayForest()
 {
-	// 2d coordinate reference alphabet
- char alphabetArray[26] = { 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T'};
-	// 2d coordinate reference alphabet
+
 
 	int xAxis = params.forestSize[0].first;
 	int yAxis = params.forestSize[0].second;
@@ -69,20 +67,7 @@ void Forest::displayForest()
 		
 		for (int x = 0; x < xAxis; x++)
 		{
-			//if (x == -1 && y == -1) // vertical
-			//{
-			//	std::cout << alphabetArray[y - 3 + 2];
-			//	x + 1;
-			//}
-			//std::cout << " ";
-			//if (y == -1 && x > 1) // horizontal
-			//{
 
-			//		std::cout << alphabetArray[x - 2];
-
-			//	y + 1; // return y to 0
-			//}
-			//else {
 
 			std::cout << " ";
 
@@ -102,7 +87,6 @@ void Forest::displayForest()
 					SetConsoleTextAttribute(hConsole, 14); // white
 				}
 				std::cout << forestMap[x][y];
-			//}
 			
 		}
 		std::cout << std::endl;
